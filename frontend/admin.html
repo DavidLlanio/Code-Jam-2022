@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="nofoobar.com" content="Nofoobar">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+
+  <title>Chat Admin</title>
+</head>
+
+<body>
+
+  <style>
+    /* The switch - the box around the slider */
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 60px;
+      height: 34px;
+    }
+
+    /* Hide default HTML checkbox */
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    /* The slider */
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      -webkit-transition: 0.4s;
+      transition: 0.4s;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 26px;
+      width: 26px;
+      left: 4px;
+      bottom: 4px;
+      background-color: white;
+      -webkit-transition: 0.4s;
+      transition: 0.4s;
+    }
+
+    input:checked+.slider {
+      background-color: #2196F3;
+    }
+
+    input:focus+.slider {
+      box-shadow: 0 0 1px #2196F3;
+    }
+
+    input:checked+.slider:before {
+      -webkit-transform: translateX(26px);
+      -ms-transform: translateX(26px);
+      transform: translateX(26px);
+    }
+
+    /* Rounded sliders */
+    .slider.round {
+      border-radius: 34px;
+    }
+
+    .slider.round:before {
+      border-radius: 50%;
+    }
+  </style>
+
+  <div>
+    <h3 style="margin-left:30px;margin-top:30px;">Administration Options</h3>
+    <div>
+      <h4>Advanced Artificial Intelligence Tehcnology(TM)(<-not a="a" typo)="typo)" </h4> <label class="switch"> <input type="checkbox" id="ai_intel_tech"> <span class="slider round"></span>
+          </label>
+    </div>
+
+    <div>
+      <h4>User Edit Privileges</h4>
+      <label class="switch">
+        <input type="checkbox" id="user_edit_priv">
+        <span class="slider round"></span>
+      </label>
+    </div>
+
+    <div>
+      <h4>Alphabetical Sorting</h4>
+      <label class="switch">
+        <input type="checkbox" id="alpha_sort">
+        <span class="slider round"></span>
+      </label>
+    </div>
+
+    <button type="button" class="btn send" id="send" onclick="send_to_server()">Send</button>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
+  <script>
+    var ws = new WebSocket("ws://localhost:8000/ws/admin");
+
+    const ai_intel_tech_checkbox = document.getElementById('ai_intel_tech')
+    ai_intel_tech_checkbox.addEventListener('change', (event) => {
+      send_to_server()
+    })
+
+    const user_edit_priv_checkbox = document.getElementById('user_edit_priv')
+    user_edit_priv_checkbox.addEventListener('change', (event) => {
+      send_to_server()
+    })
+
+
+    const alpha_sort_checkbox = document.getElementById('alpha_sort')
+    alpha_sort_checkbox.addEventListener('change', (event) => {
+      send_to_server()
+    })
+
+
+    function send_to_server() {
+
+      var value_dict = {}
+
+      var ai_intel_tech = ai_intel_tech_checkbox.checked;
+      value_dict['ai_intel_tech'] = ai_intel_tech
+
+      var user_edit_priv = user_edit_priv_checkbox.checked;
+      value_dict['user_edit_priv'] = user_edit_priv
+
+      var alpha_sort = alpha_sort_checkbox.checked;
+      value_dict['alpha_sort'] = alpha_sort
+
+      console.log(value_dict)
+      ws.send(JSON.stringify(value_dict))
+
+    }
+  </script>
+</body>
+
+</html>
