@@ -1,4 +1,13 @@
-# Python Discord Code Jam Repository Template
+# Cunning Kumiho's Project
+A chatroom that hates you and doesn't care about personalization
+
+## How to install
+sample text
+
+## How to use
+sample text
+
+# (OLD) Python Discord Code Jam Repository Template
 
 ## A Primer
 Hello code jam participants! We've put together this repository template for you to use in [our code jams](https://pythondiscord.com/events/) or even other Python events!
