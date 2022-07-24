@@ -2,23 +2,23 @@ from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 
 from .admin_utils import Settings
 
+settings = Settings()
 app = FastAPI()
 
-chat_client_list = []
-settings = Settings()
+# chat_client_list = []
 
 
-@app.websocket("/ws")
-async def websocket_endpoint(websocket: WebSocket):
-    """Websocket endpoint for communications in a chat room"""
-    await websocket.accept()
-    if websocket not in chat_client_list:
-        chat_client_list.append(websocket)
-    while True:
-        data = await websocket.receive_text()
-        for client in chat_client_list:
-            if websocket != client:
-                await client.send_text(f"{data}")
+# @app.websocket("/ws")
+# async def websocket_endpoint(websocket: WebSocket):
+#     """Websocket endpoint for communications in a chat room"""
+#     await websocket.accept()
+#     if websocket not in chat_client_list:
+#         chat_client_list.append(websocket)
+#     while True:
+#         data = await websocket.receive_text()
+#         for client in chat_client_list:
+#             if websocket != client:
+#                 await client.send_text(f"{data}")
 
 
 admin_password = "secret"
