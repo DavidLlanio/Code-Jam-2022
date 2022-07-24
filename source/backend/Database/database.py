@@ -54,7 +54,7 @@ class Credentials:
         """
         hashed_password = self.hash(password)
         user_password = self.locate_user(username)["password"]
-        if(user_password == hashed_password):
+        if user_password == hashed_password:
             return True
         else:
             return False
@@ -65,17 +65,26 @@ class Credentials:
         Creates the user per the information
         provided.
         """
-        first = ['Vanilla', 'Chocolate', 'Strawberry', 'Blueberry', 'Stale', 'Broke', 'Ded']
-        last = ['IceCream', 'Fudge', 'Cracker', 'Ehe', 'NPC']
-        first_name = first[randint(0, len(first)-1)]
-        last_name = last[randint(0, len(last)-1)]
-        generic_af_username = first_name+last_name
+        first = [
+            "Vanilla",
+            "Chocolate",
+            "Strawberry",
+            "Blueberry",
+            "Stale",
+            "Broke",
+            "Ded",
+        ]
+        last = ["IceCream", "Fudge", "Cracker", "Ehe", "NPC"]
+        first_name = first[randint(0, len(first) - 1)]
+        last_name = last[randint(0, len(last) - 1)]
+        generic_af_username = first_name + last_name
         password_hash = self.hash(password)
         user = {
             "username": username,
             "password": password_hash,
             "image_url": image_url,
-            "generic_name": generic_af_username}
+            "generic_name": generic_af_username,
+        }
         try:
             self.credentials.insert_one(user)
         except errors.DuplicateKeyError:
@@ -87,9 +96,11 @@ class Credentials:
         If the login attempt succeeds,
         allows the user to change their password.
         """
-        if(self.login(username, password)):
+        if self.login(username, password):
             new_password_hash = self.hash(new_password)
-            self.credentials.update_one({"username": username}, {"$set": {"password": new_password_hash}})
+            self.credentials.update_one(
+                {"username": username}, {"$set": {"password": new_password_hash}}
+            )
             print("Password update successful!")
         else:
             print("Access denied: User identity could not be established.")
@@ -100,7 +111,9 @@ class Credentials:
         Assuming that the user is logged in already,
         changes their avatar.
         """
-        self.credentials.update_one({"username": username}, {"$set": {"image_url": new_avatar_url}})
+        self.credentials.update_one(
+            {"username": username}, {"$set": {"image_url": new_avatar_url}}
+        )
         print("Avatar URL update successful!")
 
     def change_username(self, username, password, new_username):
@@ -110,9 +123,11 @@ class Credentials:
         the username doesn't conflict with an existing
         username, allows the user to change their username.
         """
-        if(self.login(username, password)):
+        if self.login(username, password):
             try:
-                self.credentials.update_one({"username": username}, {"$set": {"username": new_username}})
+                self.credentials.update_one(
+                    {"username": username}, {"$set": {"username": new_username}}
+                )
             except errors.DuplicateKeyError:
                 pprint("Write failed! Duplicate username")
 
@@ -120,12 +135,12 @@ class Credentials:
             print("Write failed! User identity could not be established!")
 
 
-if(__name__ == "__main__"):
+if __name__ == "__main__":
     url_start = "mongodb+srv://"
     username = urllib.parse.quote_plus("codejam2022")
-    password = urllib.parse.quote_plus('Yellowjacket@1024')
+    password = urllib.parse.quote_plus("Yellowjacket@1024")
     url_end = "@atlascluster.ig1mf.mongodb.net/?retryWrites=true&w=majority"
-    client = MongoClient(url_start+username+":"+password+url_end)
+    client = MongoClient(url_start + username + ":" + password + url_end)
     db = client.yellowjacket
     credentials = Credentials(db)
     print("Old table")
