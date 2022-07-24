@@ -10,8 +10,8 @@ class Credentials:
     """Handlers for the Credentials table"""
 
     def __init__(self, db):
-        """Inititalization. 
-        
+        """Inititalization.
+
         Initializes the table with the
         unique condition enforced on usernames
         """
@@ -34,8 +34,8 @@ class Credentials:
             pprint(document)
 
     def drop_all(self):
-        """Drops the table. 
-        
+        """Drops the table.
+
         Good for testing and
         being data efficient.
         """
@@ -60,8 +60,8 @@ class Credentials:
             return False
 
     def save_credentials(self, username, password, image_url):
-        """The create operation. 
-        
+        """The create operation.
+
         Creates the user per the information
         provided.
         """
@@ -83,7 +83,7 @@ class Credentials:
 
     def change_password(self, username, password, new_password):
         """Password change.
-        
+
         If the login attempt succeeds,
         allows the user to change their password.
         """
@@ -96,7 +96,7 @@ class Credentials:
 
     def change_avatar(self, username, new_avatar_url):
         """Avatar change.
-        
+
         Assuming that the user is logged in already,
         changes their avatar.
         """
@@ -105,7 +105,7 @@ class Credentials:
 
     def change_username(self, username, password, new_username):
         """Username change.
-        
+
         If the login attempt succeeds, and if
         the username doesn't conflict with an existing
         username, allows the user to change their username.
