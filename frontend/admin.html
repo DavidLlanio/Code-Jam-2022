@@ -77,71 +77,97 @@
     }
   </style>
 
-  <div>
-    <h3 style="margin-left:30px;margin-top:30px;">Administration Options</h3>
-    <div>
-      <h4>Advanced Artificial Intelligence Tehcnology(TM)(<-not a="a" typo)="typo)" </h4> <label class="switch"> <input type="checkbox" id="ai_intel_tech"> <span class="slider round"></span>
-          </label>
-    </div>
+  <form class="form-container" style="margin-left:30px">
+    <label for="msg">
+      <b>Password</b>
+    </label>
+    <textarea rows="1" placeholder="Type message..." id="adminpassword" name="msg" required="required"></textarea>
+    <button type="button" class="btn send" id="send" onclick="sendpassword()">Send</button>
+
+
 
     <div>
-      <h4>User Edit Privileges</h4>
-      <label class="switch">
-        <input type="checkbox" id="user_edit_priv">
-        <span class="slider round"></span>
-      </label>
+      <h3 style="margin-left:30px;margin-top:30px;">Administration Options</h3>
+      <div>
+        <h4>Advanced Artificial Intelligence Tehcnology(TM)(<-not a="a" typo)="typo)" </h4> <label class="switch"> <input type="checkbox" id="ai_intel_tech"> <span class="slider round"></span>
+            </label>
+      </div>
+
+      <div>
+        <h4>User Edit Privileges</h4>
+        <label class="switch">
+          <input type="checkbox" id="user_edit_priv">
+          <span class="slider round"></span>
+        </label>
+      </div>
+
+      <div>
+        <h4>Alphabetical Sorting</h4>
+        <label class="switch">
+          <input type="checkbox" id="alpha_sort">
+          <span class="slider round"></span>
+        </label>
+      </div>
+
+      <button type="button" class="btn send" id="send" onclick="send_to_server()">Send</button>
     </div>
 
-    <div>
-      <h4>Alphabetical Sorting</h4>
-      <label class="switch">
-        <input type="checkbox" id="alpha_sort">
-        <span class="slider round"></span>
-      </label>
-    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
+    <script>
+      var ws = new WebSocket("ws://localhost:8000/ws/admin");
 
-    <button type="button" class="btn send" id="send" onclick="send_to_server()">Send</button>
-  </div>
+      ws.onmessage = function (event) {
+        console.log("response" + event.data)
+      }
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
-  <script>
-    var ws = new WebSocket("ws://localhost:8000/ws/admin");
+      const ai_intel_tech_checkbox = document.getElementById('ai_intel_tech')
+      ai_intel_tech_checkbox.addEventListener('change', (event) => {
+        send_to_server()
+      })
 
-    const ai_intel_tech_checkbox = document.getElementById('ai_intel_tech')
-    ai_intel_tech_checkbox.addEventListener('change', (event) => {
-      send_to_server()
-    })
-
-    const user_edit_priv_checkbox = document.getElementById('user_edit_priv')
-    user_edit_priv_checkbox.addEventListener('change', (event) => {
-      send_to_server()
-    })
+      const user_edit_priv_checkbox = document.getElementById('user_edit_priv')
+      user_edit_priv_checkbox.addEventListener('change', (event) => {
+        send_to_server()
+      })
 
 
-    const alpha_sort_checkbox = document.getElementById('alpha_sort')
-    alpha_sort_checkbox.addEventListener('change', (event) => {
-      send_to_server()
-    })
+      const alpha_sort_checkbox = document.getElementById('alpha_sort')
+      alpha_sort_checkbox.addEventListener('change', (event) => {
+        send_to_server()
+      })
 
 
-    function send_to_server() {
+      function send_to_server() {
 
-      var value_dict = {}
+        var value_dict = {}
 
-      var ai_intel_tech = ai_intel_tech_checkbox.checked;
-      value_dict['ai_intel_tech'] = ai_intel_tech
+        var ai_intel_tech = ai_intel_tech_checkbox.checked;
+        value_dict['ai_intel_tech'] = ai_intel_tech
 
-      var user_edit_priv = user_edit_priv_checkbox.checked;
-      value_dict['user_edit_priv'] = user_edit_priv
+        var user_edit_priv = user_edit_priv_checkbox.checked;
+        value_dict['user_edit_priv'] = user_edit_priv
 
-      var alpha_sort = alpha_sort_checkbox.checked;
-      value_dict['alpha_sort'] = alpha_sort
+        var alpha_sort = alpha_sort_checkbox.checked;
+        value_dict['alpha_sort'] = alpha_sort
 
-      console.log(value_dict)
-      ws.send(JSON.stringify(value_dict))
+        console.log(value_dict)
+        ws.send(JSON.stringify(value_dict))
 
-    }
-  </script>
+      }
+
+
+
+      function sendpassword() {
+        var adminpassword = document
+          .getElementById("adminpassword")
+          .value;
+        var message = { "password": adminpassword }
+        console.log('sending password to server: ')
+        console.log(JSON.stringify(message))
+        ws.send(JSON.stringify(message));
+
+      }
+    </script>
 </body>
 
 </html>

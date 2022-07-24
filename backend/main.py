@@ -18,11 +18,24 @@ async def websocket_endpoint(websocket: WebSocket):
                 await client.send_text(f"{data}")
 
 
+admin_password = "secret"
+admin_client_list = []
+
+
 # TODO: initialization, persistance, affect data
 @app.websocket("/ws/admin")
 async def admin_websocket(websocket: WebSocket):
     """Websocket endpoint for handling admin updates"""
     await websocket.accept()
+    input_password = ""
     while True:
-        data = await websocket.receive_text()
+        while input_password != admin_password:
+            data = await websocket.receive_json()
+            input_password = data.get("password", None)
+            if input_password == admin_password:
+                await websocket.send_json({"message": "correct password"})
+                break
+            await websocket.send_json({"message": "incorrect or missing password"})
+
+        data = await websocket.receive_json()
         print(data)
