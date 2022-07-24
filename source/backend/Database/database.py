@@ -8,9 +8,13 @@ from pymongo import MongoClient, errors
 
 class Credentials:
     """Handlers for the Credentials table"""
+
     def __init__(self, db):
-        """Inititalizes the table with the
-        unique condition enforced on usernames"""
+        """Inititalization. 
+        
+        Initializes the table with the
+        unique condition enforced on usernames
+        """
         self.credentials = db.credentials
         self.credentials.create_index("password")
         self.credentials.create_index("image_url")
@@ -30,8 +34,11 @@ class Credentials:
             pprint(document)
 
     def drop_all(self):
-        """Drops the table. Good for testing and
-        being data efficient."""
+        """Drops the table. 
+        
+        Good for testing and
+        being data efficient.
+        """
         self.credentials.drop()
         print("Deletion successful!")
 
@@ -42,7 +49,9 @@ class Credentials:
     # End of helper functions
     def login(self, username, password):
         """Tries to log the user in.
-        Returns a T/F output for now."""
+
+        Returns a T/F output for now.
+        """
         hashed_password = self.hash(password)
         user_password = self.locate_user(username)["password"]
         if(user_password == hashed_password):
@@ -51,8 +60,11 @@ class Credentials:
             return False
 
     def save_credentials(self, username, password, image_url):
-        """The create operation. Creates the user per the information
-        provided."""
+        """The create operation. 
+        
+        Creates the user per the information
+        provided.
+        """
         first = ['Vanilla', 'Chocolate', 'Strawberry', 'Blueberry', 'Stale', 'Broke', 'Ded']
         last = ['IceCream', 'Fudge', 'Cracker', 'Ehe', 'NPC']
         first_name = first[randint(0, len(first)-1)]
@@ -70,8 +82,11 @@ class Credentials:
             pprint("Write failed! Duplicate username")
 
     def change_password(self, username, password, new_password):
-        """If the login attempt succeeds,
-        allows the user to change their password."""
+        """Password change.
+        
+        If the login attempt succeeds,
+        allows the user to change their password.
+        """
         if(self.login(username, password)):
             new_password_hash = self.hash(new_password)
             self.credentials.update_one({"username": username}, {"$set": {"password": new_password_hash}})
@@ -80,15 +95,21 @@ class Credentials:
             print("Access denied: User identity could not be established.")
 
     def change_avatar(self, username, new_avatar_url):
-        """Assuming that the user is logged in already,
-        changes their avatar."""
+        """Avatar change.
+        
+        Assuming that the user is logged in already,
+        changes their avatar.
+        """
         self.credentials.update_one({"username": username}, {"$set": {"image_url": new_avatar_url}})
         print("Avatar URL update successful!")
 
     def change_username(self, username, password, new_username):
-        """If the login attempt succeeds, and if
+        """Username change.
+        
+        If the login attempt succeeds, and if
         the username doesn't conflict with an existing
-        username, allows the user to change their username."""
+        username, allows the user to change their username.
+        """
         if(self.login(username, password)):
             try:
                 self.credentials.update_one({"username": username}, {"$set": {"username": new_username}})
