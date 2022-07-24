@@ -1,8 +1,8 @@
-from pprint import pprint
-from pymongo import MongoClient, errors
-from random import randint
-from hashlib import md5
 import urllib
+from hashlib import md5
+from pprint import pprint
+from random import randint
+from pymongo import MongoClient, errors
 
 
 class Credentials:
