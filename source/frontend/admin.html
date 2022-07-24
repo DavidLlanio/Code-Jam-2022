@@ -89,14 +89,14 @@
     <div>
       <h3 style="margin-left:30px;margin-top:30px;">Administration Options</h3>
       <div>
-        <h4>Advanced Artificial Intelligence Tehcnology(TM)(<-not a="a" typo)="typo)" </h4> <label class="switch"> <input type="checkbox" id="ai_intel_tech"> <span class="slider round"></span>
+        <h4>Advanced Artificial Intelligence Tehcnology(TM)(<-not a="a" typo)="typo)" </h4> <label class="switch"> <input type="checkbox" id="randomize_username"> <span class="slider round"></span>
             </label>
       </div>
 
       <div>
-        <h4>User Edit Privileges</h4>
+        <h4>User Edit Messages Privileges</h4>
         <label class="switch">
-          <input type="checkbox" id="user_edit_priv">
+          <input type="checkbox" id="allow_edit_messages">
           <span class="slider round"></span>
         </label>
       </div>
@@ -104,7 +104,7 @@
       <div>
         <h4>Alphabetical Sorting</h4>
         <label class="switch">
-          <input type="checkbox" id="alpha_sort">
+          <input type="checkbox" id="allow_edit_avatars">
           <span class="slider round"></span>
         </label>
       </div>
@@ -117,44 +117,46 @@
       var ws = new WebSocket("ws://localhost:8000/ws/admin");
 
       ws.onmessage = function (event) {
-        console.log("response" + event.data)
+        console.log("received: " + event.data)
       }
 
-      const ai_intel_tech_checkbox = document.getElementById('ai_intel_tech')
-      ai_intel_tech_checkbox.addEventListener('change', (event) => {
-        send_to_server()
+      const randomize_username_checkbox = document.getElementById('randomize_username')
+      randomize_username_checkbox.addEventListener('change', (event) => {
+        var updated_setting = {
+          "settings": {
+            "randomize_username": randomize_username_checkbox.checked
+          }
+        }
+        send_to_server(updated_setting)
       })
 
-      const user_edit_priv_checkbox = document.getElementById('user_edit_priv')
-      user_edit_priv_checkbox.addEventListener('change', (event) => {
-        send_to_server()
+      const allow_edit_messages_checkbox = document.getElementById('allow_edit_messages')
+      allow_edit_messages_checkbox.addEventListener('change', (event) => {
+        var updated_setting = {
+          "settings": {
+            "allow_edit_messages": allow_edit_messages.checked
+          }
+        }
+        send_to_server(updated_setting)
       })
 
 
-      const alpha_sort_checkbox = document.getElementById('alpha_sort')
-      alpha_sort_checkbox.addEventListener('change', (event) => {
-        send_to_server()
+      const allow_edit_avatars_checkbox = document.getElementById('allow_edit_avatars')
+      allow_edit_avatars_checkbox.addEventListener('change', (event) => {
+        var updated_setting = {
+          "settings": {
+            "allow_edit_avatars": allow_edit_avatars_checkbox.checked
+          }
+        }
+        send_to_server(updated_setting)
       })
 
 
-      function send_to_server() {
-
-        var value_dict = {}
-
-        var ai_intel_tech = ai_intel_tech_checkbox.checked;
-        value_dict['ai_intel_tech'] = ai_intel_tech
-
-        var user_edit_priv = user_edit_priv_checkbox.checked;
-        value_dict['user_edit_priv'] = user_edit_priv
-
-        var alpha_sort = alpha_sort_checkbox.checked;
-        value_dict['alpha_sort'] = alpha_sort
-
-        console.log(value_dict)
-        ws.send(JSON.stringify(value_dict))
+      function send_to_server(dict) {
+        console.log("sending: " + JSON.stringify(dict))
+        ws.send(JSON.stringify(dict))
 
       }
-
 
 
       function sendpassword() {
@@ -162,10 +164,8 @@
           .getElementById("adminpassword")
           .value;
         var message = { "password": adminpassword }
-        console.log('sending password to server: ')
-        console.log(JSON.stringify(message))
+        console.log("sending: " + JSON.stringify(message))
         ws.send(JSON.stringify(message));
-
       }
     </script>
 </body>

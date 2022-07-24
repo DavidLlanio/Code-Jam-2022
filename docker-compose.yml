@@ -8,12 +8,11 @@ services:
   #     - POSTGRES_USER=postgres
   #     - POSTGRES_PASSWORD=postgres
   #     - POSTGRES_DB=postgres
-  fastapi:
+  web:
     build: .
     volumes:
-      - ./source/backend:/code/app:z
-    command: uvicorn app.server:app --port 8000 --host 0.0.0.0 --reload
+      - ./backend:/code/app
     ports:
-      - 8000:8000
+      - "8000:8000"
     # depends_on:
     #   - postgres
