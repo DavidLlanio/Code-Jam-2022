@@ -9,7 +9,7 @@ __all__: list[str] = ["Gateway"]
 class Gateway:
     """A class that represents the gateway for the chat room."""
 
-    CONNECTIONS: ClassVar[list[websockets.WebsocketServerProtocol]] = []
+    CONNECTIONS: ClassVar[list] = []
 
     @classmethod
     async def deploy_gateway(
