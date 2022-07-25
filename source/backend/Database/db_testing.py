@@ -1,0 +1,45 @@
+from database import Credentials, Messages
+
+# Note: To run these tests,
+# docker compose -f "docker-compose.dbtesting.yaml" up --build
+
+# Testing for messages table
+messages = Messages()
+print("Old table")
+messages.show_table()
+message_one = messages.add_message("Hello world!", "cooltas")
+message_two = messages.add_message("Watch me change this lol", "malitas")
+print("After two additions")
+messages.show_table()
+messages.edit_message(message_one, "Am dum", "malitas")
+messages.edit_message(message_two, "I can do it too, ya dum dum!", "cooltas")
+print("After spicy edits")
+messages.show_table()
+messages.drop_all()
+print("Nothing should appear past this point!")
+messages.show_table()
+
+# Testing for credentials table
+credentials = Credentials()
+print("Old table")
+credentials.show_table()
+credentials.save_credentials("objecttas", "some_stuff", "some_url")
+print("New table")
+credentials.show_table()
+credentials.change_password("objecttas", "some_password", "new_password")
+credentials.change_password("objecttas", "some_stuff", "new_stuff")
+print("Table when password is changed")
+credentials.show_table()
+print("Login successful:", credentials.login("objecttas", "some_password"))
+print("Login successful:", credentials.login("objecttas", "some_stuff"))
+print("Login successful:", credentials.login("objecttas", "new_stuff"))
+credentials.change_avatar("objecttas", "cool_url")
+print("After avatar update:")
+credentials.show_table()
+credentials.change_username("objecttas", "new_stuff", "cooltas")
+print("After username update:")
+credentials.show_table()
+credentials.drop_all()
+credentials.show_table()
+print("Nothing should appear after this point!")
+credentials.show_table()
