@@ -4,6 +4,8 @@ __all__: list[str] = ["GatewayEvents"]
 
 
 class GatewayEvents:
+    """A class enum for the events of the gateway."""
+
     HEARTBEAT: ClassVar[int] = 0
     HEARBEAT_ACK: ClassVar[int] = 1
     USER_CREATE: ClassVar[int] = 2
@@ -17,4 +19,5 @@ class GatewayEvents:
 
     @classmethod
     def all_events(cls) -> list[str]:
+        """Class method to return all of the names of the events."""
         return [attr for attr in dir(cls) if not attr.startswith("_")]
