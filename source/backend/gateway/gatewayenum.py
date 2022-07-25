@@ -18,4 +18,3 @@ class GatewayEvents:
     @classmethod
     def all_events(cls) -> list[str]:
         return [attr for attr in dir(cls) if not attr.startswith("_")]
-        
