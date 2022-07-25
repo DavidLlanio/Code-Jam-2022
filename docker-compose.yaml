@@ -2,13 +2,11 @@ version: "3.8"
 
 services:
   dbhandler:
-    build: .
+    build: ./source/backend/Database/
     environment:
       - USERNAME=codejam2022
       - PASSWORD=yellowjacket
-    command: python /code/app/Database/database.py
-    volumes:
-      - ./source/backend:/code/app
+    command: python /code/app/database.py
 
   database:
     image: mongo:latest
