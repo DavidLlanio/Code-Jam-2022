@@ -10,12 +10,18 @@ from pymongo import MongoClient, errors
 class Credentials:
     """Handlers for the Credentials table"""
 
-    def __init__(self, db):
+    def __init__(self):
         """Inititalization.
 
         Initializes the table with the
         unique condition enforced on usernames
         """
+        client = MongoClient(
+            host=["database:27017"],
+            username=os.getenv("USERNAME"),
+            password=os.getenv("PASSWORD"),
+        )
+        db = client.yellowjacket
         self.credentials = db.credentials
         self.credentials.create_index("password")
         self.credentials.create_index("image_url")
@@ -139,11 +145,17 @@ class Credentials:
 class Messages:
     """Handlers for the Messages table"""
 
-    def __init__(self, db):
+    def __init__(self):
         """Inititalization.
 
         Initializes the table.
         """
+        client = MongoClient(
+            host=["database:27017"],
+            username=os.getenv("USERNAME"),
+            password=os.getenv("PASSWORD"),
+        )
+        db = client.yellowjacket
         self.messages = db.messages
         self.messages.create_index("timestamp")
         self.messages.create_index("edit_timestamp")
@@ -213,57 +225,3 @@ class Messages:
                 }
             },
         )
-
-
-if __name__ == "__main__":
-    # url_start = "mongodb+srv://"
-    # username = urllib.parse.quote_plus("codejam2022")
-    # password = urllib.parse.quote_plus("Yellowjacket@1024")
-    # url_end = "@atlascluster.ig1mf.mongodb.net/?retryWrites=true&w=majority"
-    # client = MongoClient(url_start + username + ":" + password + url_end)
-
-    client = MongoClient(
-        host=["database:27017"],
-        username=os.getenv("USERNAME"),
-        password=os.getenv("PASSWORD"),
-    )
-    db = client.yellowjacket
-    messages = Messages(db)
-    print("Old table")
-    messages.show_table()
-    message_one = messages.add_message("Hello world!", "cooltas")
-    message_two = messages.add_message("Watch me change this lol", "malitas")
-    print("After two additions")
-    messages.show_table()
-    messages.edit_message(message_one, "Am dum", "malitas")
-    messages.edit_message(message_two, "I can do it too, ya dum dum!", "cooltas")
-    print("After spicy edits")
-    messages.show_table()
-    messages.drop_all()
-    print("Nothing should appear past this point!")
-    messages.show_table()
-
-    # Testing for credentials table
-    # credentials = Credentials(db)
-    # print("Old table")
-    # credentials.show_table()
-    # credentials.save_credentials("objecttas", "some_stuff", "some_url")
-    # print("New table")
-    # credentials.show_table()
-    # credentials.change_password("objecttas", "some_password", "new_password")
-    # credentials.change_password("objecttas", "some_stuff", "new_stuff")
-    # print("Table when password is changed")
-    # credentials.show_table()
-    # print("Login successful:", credentials.login("objecttas", "some_password"))
-    # print("Login successful:", credentials.login("objecttas", "some_stuff"))
-    # print("Login successful:", credentials.login("objecttas", "new_stuff"))
-    # credentials.change_avatar("objecttas", "cool_url")
-    # print("After avatar update:")
-    # credentials.show_table()
-    # credentials.change_username("objecttas", "new_stuff", "cooltas")
-    # print("After username update:")
-    # credentials.show_table()
-    # credentials.drop_all()
-    # credentials.show_table()
-    # print("Nothing should appear after this point!")
-    # credentials.show_table()

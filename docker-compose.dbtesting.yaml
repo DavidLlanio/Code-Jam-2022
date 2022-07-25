@@ -6,7 +6,7 @@ services:
     environment:
       - USERNAME=codejam2022
       - PASSWORD=yellowjacket
-    command: python /code/app/database.py
+    command: python /code/app/db_testing.py
 
   database:
     image: mongo:latest
