@@ -1,5 +1,5 @@
+import os
 import time
-import urllib
 from hashlib import md5
 from pprint import pprint
 from random import randint
@@ -216,13 +216,18 @@ class Messages:
 
 
 if __name__ == "__main__":
-    url_start = "mongodb+srv://"
-    username = urllib.parse.quote_plus("codejam2022")
-    password = urllib.parse.quote_plus("Yellowjacket@1024")
-    url_end = "@atlascluster.ig1mf.mongodb.net/?retryWrites=true&w=majority"
-    client = MongoClient(url_start + username + ":" + password + url_end)
-    db = client.yellowjacket
+    # url_start = "mongodb+srv://"
+    # username = urllib.parse.quote_plus("codejam2022")
+    # password = urllib.parse.quote_plus("Yellowjacket@1024")
+    # url_end = "@atlascluster.ig1mf.mongodb.net/?retryWrites=true&w=majority"
+    # client = MongoClient(url_start + username + ":" + password + url_end)
 
+    client = MongoClient(
+        host=["database:27017"],
+        username=os.getenv("USERNAME"),
+        password=os.getenv("PASSWORD"),
+    )
+    db = client.yellowjacket
     messages = Messages(db)
     print("Old table")
     messages.show_table()
