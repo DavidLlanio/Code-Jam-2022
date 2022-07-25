@@ -2,6 +2,7 @@ from typing import ClassVar
 
 __all__: list[str] = ["GatewayEvents"]
 
+
 class GatewayEvents:
     HEARTBEAT: ClassVar[int] = 0
     HEARBEAT_ACK: ClassVar[int] = 1
@@ -17,4 +18,3 @@ class GatewayEvents:
     @classmethod
     def all_events(cls) -> list[str]:
         return [attr for attr in dir(cls) if not attr.startswith("_")]
-        
