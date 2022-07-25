@@ -3,6 +3,7 @@ import time
 from hashlib import md5
 from pprint import pprint
 from random import randint
+from typing import Any
 
 from pymongo import MongoClient, errors
 
@@ -29,18 +30,18 @@ class Credentials:
         self.credentials.create_index("username", unique=True)
 
     # Helper and testing functions start here
-    def locate_user(self, username):
+    def locate_user(self, username: str) -> Any:
         """Locates the user data given the username"""
         user_data = self.credentials.find_one({"username": username})
         return user_data
 
-    def show_table(self):
+    def show_table(self) -> None:
         """Shows the table. Useful for debugging"""
         cursor = self.credentials.find({})
         for document in cursor:
             pprint(document)
 
-    def drop_all(self):
+    def drop_all(self) -> None:
         """Drops the table.
 
         Good for testing and
@@ -49,12 +50,12 @@ class Credentials:
         self.credentials.drop()
         print("Deletion successful!")
 
-    def hash(self, input_data):
+    def hash(self, input_data: str) -> str:
         """Hashes and returns the hex digest."""
         return md5(input_data.encode()).hexdigest()
 
     # End of helper functions
-    def login(self, username, password):
+    def login(self, username: str, password: str) -> bool:
         """Tries to log the user in.
 
         Returns a T/F output for now.
@@ -66,7 +67,7 @@ class Credentials:
         else:
             return False
 
-    def save_credentials(self, username, password, image_url):
+    def save_credentials(self, username: str, password: str, image_url: str) -> None:
         """The create operation.
 
         Creates the user per the information
@@ -97,7 +98,7 @@ class Credentials:
         except errors.DuplicateKeyError:
             pprint("Write failed! Duplicate username")
 
-    def change_password(self, username, password, new_password):
+    def change_password(self, username: str, password: str, new_password: str) -> None:
         """Password change.
 
         If the login attempt succeeds,
@@ -112,7 +113,7 @@ class Credentials:
         else:
             print("Access denied: User identity could not be established.")
 
-    def change_avatar(self, username, new_avatar_url):
+    def change_avatar(self, username: str, new_avatar_url: str) -> None:
         """Avatar change.
 
         Assuming that the user is logged in already,
@@ -123,7 +124,7 @@ class Credentials:
         )
         print("Avatar URL update successful!")
 
-    def change_username(self, username, password, new_username):
+    def change_username(self, username: str, password: str, new_username: str) -> None:
         """Username change.
 
         If the login attempt succeeds, and if
@@ -165,18 +166,18 @@ class Messages:
         self.messages.create_index("pre_edit_text")
 
     # Helpers start here
-    def locate_message(self, id):
+    def locate_message(self, id: str) -> Any:
         """Locates the message given the message id"""
         message_data = self.messages.find_one({"_id": id})
         return message_data
 
-    def show_table(self):
+    def show_table(self) -> None:
         """Shows the table. Useful for debugging"""
         cursor = self.messages.find({})
         for document in cursor:
             pprint(document)
 
-    def drop_all(self):
+    def drop_all(self) -> None:
         """Drops the table.
 
         Good for testing and
@@ -185,7 +186,7 @@ class Messages:
         self.messages.drop()
         print("Deletion successful!")
 
-    def add_message(self, current_text, sender_username):
+    def add_message(self, current_text: str, sender_username: str) -> None:
         """Adds a single message.
 
         edit_timestamp, editor_username and pre_edit_text
@@ -204,7 +205,7 @@ class Messages:
         result = self.messages.insert_one(message_data)
         return result.inserted_id
 
-    def edit_message(self, id, current_text, editor_username):
+    def edit_message(self, id: str, current_text: str, editor_username: str) -> None:
         """Edits a single message.
 
         Records timestamp for the edit, swaps pre-
