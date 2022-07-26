@@ -13,6 +13,8 @@ class Settings(object):
         self.randomize_username = False
         self.allow_edit_messages = False
         self.allow_edit_avatars = False
+        self.sort_by_alpha = False
+        self.double_english = False
 
     def get_settings(self) -> dict[str, bool]:
         """Returns all the settings and their values in dictionary form"""
@@ -20,6 +22,8 @@ class Settings(object):
             "randomize_username": self.randomize_username,
             "allow_edit_messages": self.allow_edit_messages,
             "allow_edit_avatars": self.allow_edit_avatars,
+            "sort_by_alpha": self.sort_by_alpha,
+            "double_english": self.double_english,
         }
 
     def update_settings(self, settings_to_update: dict[str, bool]) -> None:
@@ -33,6 +37,12 @@ class Settings(object):
         self.allow_edit_avatars = settings_to_update.get(
             "allow_edit_avatars", self.allow_edit_avatars
         )
-
+        self.sort_by_alpha = settings_to_update.get(
+            "sort_by_alpha", self.sort_by_alpha
+        )
+        self.double_english = settings_to_update.get(
+            "double_english", self.double_english
+        )
+        
         # TODO: update database too!
         pass
