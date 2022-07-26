@@ -273,22 +273,22 @@ class Admin:
 
     def change_property(
         self,
-        property,
-        value,
-        channel="main",
-    ):
+        property: str,
+        value: bool,
+        channel: str = "main",
+    ) -> None:
         """Changes one property."""
         self.admin.update_one({"channel": channel}, {"$set": {property: value}})
 
     def add_permissions(
         self,
-        channel,
-        randomize_username,
-        allow_edit_messages,
-        allow_edit_avatars,
-        sort_by_alpha,
-        double_english,
-    ):
+        channel: str,
+        randomize_username: bool,
+        allow_edit_messages: bool,
+        allow_edit_avatars: bool,
+        sort_by_alpha: bool,
+        double_english: bool,
+    ) -> None:
         """The create operation.
 
         Creates a new permission set as required.

@@ -37,9 +37,7 @@ class Settings(object):
         self.allow_edit_avatars = settings_to_update.get(
             "allow_edit_avatars", self.allow_edit_avatars
         )
-        self.sort_by_alpha = settings_to_update.get(
-            "sort_by_alpha", self.sort_by_alpha
-        )
+        self.sort_by_alpha = settings_to_update.get("sort_by_alpha", self.sort_by_alpha)
         self.double_english = settings_to_update.get(
             "double_english", self.double_english
         )
