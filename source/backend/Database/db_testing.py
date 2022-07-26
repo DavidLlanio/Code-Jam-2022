@@ -1,4 +1,4 @@
-from database import Credentials, Messages
+from database import Admin, Credentials, Messages
 
 # Note: To run these tests,
 # docker compose -f "docker-compose.dbtesting.yaml" up --build
@@ -43,3 +43,25 @@ credentials.drop_all()
 credentials.show_table()
 print("Nothing should appear after this point!")
 credentials.show_table()
+
+# Testing for admin
+admin = Admin()
+print("Old table")
+admin.show_table()
+admin.change_property("double_english", True)
+admin.change_property("randomize_username", True)
+print("After perms change:")
+admin.show_table()
+admin.add_permissions(
+    channel="fluff",
+    randomize_username=True,
+    allow_edit_messages=True,
+    allow_edit_avatars=True,
+    sort_by_alpha=True,
+    double_english=True,
+)
+print("Post addition of fluff channel:")
+admin.show_table()
+admin.drop_all()
+print("Nothing should appear beyond this point!")
+admin.show_table()

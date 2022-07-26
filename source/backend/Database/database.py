@@ -228,3 +228,78 @@ class Messages:
                 }
             },
         )
+
+
+class Admin:
+    """Handlers for the admin table."""
+
+    def __init__(self):
+        """Inititalization.
+
+        Initializes the table.
+        """
+        client = MongoClient(
+            host=["database:27017"],
+            username=os.getenv("USERNAME"),
+            password=os.getenv("PASSWORD"),
+        )
+        db = client.yellowjacket
+        self.admin = db.admin
+        self.admin.create_index("channel", unique=True)
+        defaults = {
+            "channel": "main",
+            "randomize_username": False,
+            "allow_edit_messages": False,
+            "allow_edit_avatars": False,
+            "sort_by_alpha": False,
+            "double_english": False,
+        }
+        self.admin.insert_one(defaults)
+
+    def show_table(self) -> None:
+        """Shows the table. Useful for debugging"""
+        cursor = self.admin.find({})
+        for document in cursor:
+            pprint(document)
+
+    def drop_all(self) -> None:
+        """Drops the table.
+
+        Good for testing and
+        being data efficient.
+        """
+        self.admin.drop()
+        print("Deletion successful!")
+
+    def change_property(
+        self,
+        property,
+        value,
+        channel="main",
+    ):
+        """Changes one property."""
+        self.admin.update_one({"channel": channel}, {"$set": {property: value}})
+
+    def add_permissions(
+        self,
+        channel,
+        randomize_username,
+        allow_edit_messages,
+        allow_edit_avatars,
+        sort_by_alpha,
+        double_english,
+    ):
+        """The create operation.
+
+        Creates a new permission set as required.
+        Note that channel names must be unique.
+        """
+        permissions = {
+            "channel": channel,
+            "randomize_username": randomize_username,
+            "allow_edit_messages": allow_edit_messages,
+            "allow_edit_avatars": allow_edit_avatars,
+            "sort_by_alpha": sort_by_alpha,
+            "double_english": double_english,
+        }
+        self.admin.insert_one(permissions)
