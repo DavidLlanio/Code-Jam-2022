@@ -43,6 +43,6 @@ class Settings(object):
         self.double_english = settings_to_update.get(
             "double_english", self.double_english
         )
-        
+
         # TODO: update database too!
         pass
