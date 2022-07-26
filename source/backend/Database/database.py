@@ -3,9 +3,10 @@ import time
 from hashlib import md5
 from pprint import pprint
 from random import randint
-from typing import Any
 
 from pymongo import MongoClient, errors
+
+__all__: list[str] = ["Credentials", "Messages"]
 
 
 class Credentials:
@@ -30,9 +31,10 @@ class Credentials:
         self.credentials.create_index("username", unique=True)
 
     # Helper and testing functions start here
-    def locate_user(self, username: str) -> Any:
+    def locate_user(self, username: str) -> dict:
         """Locates the user data given the username"""
         user_data = self.credentials.find_one({"username": username})
+        print("Type: ", type(user_data))
         return user_data
 
     def show_table(self) -> None:
@@ -166,7 +168,7 @@ class Messages:
         self.messages.create_index("pre_edit_text")
 
     # Helpers start here
-    def locate_message(self, id: str) -> Any:
+    def locate_message(self, id: str) -> dict:
         """Locates the message given the message id"""
         message_data = self.messages.find_one({"_id": id})
         return message_data
