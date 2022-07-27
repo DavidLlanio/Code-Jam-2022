@@ -6,7 +6,7 @@ from random import randint
 
 from pymongo import MongoClient, errors
 
-__all__: list[str] = ["Credentials", "Messages"]
+__all__: list[str] = ["Credentials", "Messages", "Admin"]
 
 
 class Credentials:
@@ -271,14 +271,18 @@ class Admin:
         self.admin.drop()
         print("Deletion successful!")
 
-    def change_property(
+    def change_properties(
         self,
-        property: str,
-        value: bool,
+        properties: dict[str, bool],
         channel: str = "main",
     ) -> None:
-        """Changes one property."""
-        self.admin.update_one({"channel": channel}, {"$set": {property: value}})
+        """Changes specified properties."""
+        self.admin.update_one({"channel": channel}, {"$set": properties})
+        return self.pull_table(channel)
+
+    def pull_table(self, channel: str = "main") -> dict[str, bool]:
+        """Returns the table with the specified channel name."""
+        return self.admin.find_one({"channel": channel})
 
     def add_permissions(
         self,
