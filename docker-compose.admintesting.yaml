@@ -1,0 +1,23 @@
+version: "3.8"
+
+services:
+  dbhandler:
+    build: ./source/backend/
+    environment:
+      - USERNAME=codejam2022
+      - PASSWORD=yellowjacket
+    command: python /code/app/admin_utils_testing.py
+
+  database:
+    image: mongo:latest
+    container_name: "mongo"
+    environment:
+      - MONGO_INITDB_DATABASE=Yellowjacket
+      - MONGO_INITDB_ROOT_USERNAME=codejam2022
+      - MONGO_INITDB_ROOT_PASSWORD=yellowjacket
+    volumes:
+      - mongo:/data/db
+    command: --quiet --logpath /dev/null
+
+volumes:
+  mongo:
