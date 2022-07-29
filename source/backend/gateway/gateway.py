@@ -1,4 +1,5 @@
 import asyncio
+import json
 from typing import ClassVar
 
 import websockets
@@ -9,7 +10,7 @@ __all__: list[str] = ["Gateway"]
 class Gateway:
     """A class that represents the gateway for the chat room."""
 
-    CONNECTIONS: ClassVar[list] = []
+    CONNECTIONS: ClassVar[list[dict[str, websockets.WebsocketServerProtocol]]] = []
 
     @classmethod
     async def deploy_gateway(
@@ -19,13 +20,49 @@ class Gateway:
         async with websockets.serve(
             cls.register_connections, host, port, ping_interval=45, ping_timeout=20
         ) as websocket:
-            await cls.event_manager(websocket)
+            await cls.connections_manager(websocket)
 
-    async def event_manager(
+    async def connections_manager(
         self, websocket: websockets.WebsocketServerProtocol
     ) -> None:
-        """Method that handles all incoming packets."""
-        raise NotImplementedError()
+        """Method that handles all incoming websocket connections."""
+        if websocket.path == "/admin/ws":
+            await self.admin_management(websocket)
+        elif websocket.path == "/chat/ws":
+            await self.user_management(websocket)
+
+    async def admin_management(self, websocket: websockets.WebsocketServerProtocol):
+        """Method that manages admin connections"""
+        current_settings = {}
+        await websocket.send(current_settings)
+        async for packet in websocket:
+            payload = json.loads(packet)
+            match payload.get("eventcode"):
+                case 0:
+                    await websocket.ping("{eventcode: 0, data: {}}")
+                case 8:
+                    # change the admin settings
+                    ...
+                case other:
+                    pass
+
+    async def user_management(self, websocket: websockets.WebsocketServerProtocol):
+        """Method that manages regular user connections"""
+        async for packet in websocket:
+            payload = json.loads(packet)
+            match payload.get("eventcode"):
+                case 0:
+                    await websocket.ping("{eventcode: 0, data: {}}")
+                case 5:
+                    # save the payload to the db
+                    message_payload = {
+                        "type": "message",
+                        "user": payload.get("user", "Unknown User"),
+                        "message": payload.get("message", "Hello World!"),
+                    }
+                    await self.send_message(message_payload)
+                case other:
+                    pass
 
     def authorizer(self, token: str) -> bool:
         """Method to authorize certain users."""
@@ -38,7 +75,7 @@ class Gateway:
         """Method for registering all new client connections."""
         token = await websocket.recv()
         if self.authorizer(token):
-            self.CONNECTIONS.append(websocket)
+            self.CONNECTIONS.append({token.split(":")[0]: websocket})
         else:
             await websocket.close(1011, "authentication failed")
         try:
@@ -46,20 +83,8 @@ class Gateway:
         finally:
             self.CONNECTIONS.remove(websocket)
 
-    async def heart(self) -> None:
-        """Method to send heartbeats to a client to keep the websocket connection alive."""
-        while True:
-            for connection in self.CONNECTIONS:
-                try:
-                    pong = await connection.ping("{eventcode: 0, data: {}}")
-                    await pong
-                except websockets.ConnectionClosed:
-                    self.CONNECTIONS.remove(connection)
-                finally:
-                    await asyncio.sleep(45)
-
-    async def send_message(self, text: str) -> None:
+    async def send_message(self, payload: dict[str, str]) -> None:
         """Method to send a message to all clients"""
-        asyncio.get_event_loop().run_in_executor(
-            None, websockets.broadcast(self.CONNECTIONS, text)
+        (asyncio.get_event_loop() or asyncio.new_event_loop()).run_in_executor(
+            None, websockets.broadcast(self.CONNECTIONS, payload["message"])
         )
