@@ -20,6 +20,7 @@ function sendSettings(event){
     
     // Create packet
     const msg = {
+        type: "command"
         auth: "admin",
         features: {
             ai: tog1s,

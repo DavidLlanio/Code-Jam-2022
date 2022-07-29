@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
     <title>Codejam2022</title>
     <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/Icon-Button.css">
     <link rel="stylesheet" href="assets/css/styles.css">
     <link rel="stylesheet" href="assets/css/Toggle-Switch-toggle-switch.css">
     <link rel="stylesheet" href="assets/css/Toggle-Switch.css">
@@ -15,7 +16,7 @@
     <div class="text-center">
         <div class="row">
             <div class="col">
-                <h1 style="margin-right: 71px;"><button class="btn btn-primary float-start" type="button" style="margin: 0px;margin-top: 5px;margin-left: 5px;background: var(--bs-red);">Leave</button>Chatroom 123</h1>
+                <h1 style="margin-right: 71px;"><button class="btn btn-primary float-start" type="button" style="margin: 0px;margin-top: 5px;margin-left: 5px;background: var(--bs-red);" onclick="leaveButton(event)">Leave</button>Chatroom 123</h1>
             </div>
         </div>
     </div>
@@ -38,8 +39,9 @@
     </div>
     <div>
         <div class="row" style="margin: 20px;">
+            <div class="col" style="padding-right: 0px;margin-right: -790px;"><img class="rounded-circle" id="userpfp" src="https://cataas.com/cat/says/hello%20world!" width="50" height="50" style="margin-right: 5px;"></div>
             <div class="col">
-                <div class="input-group"><span class="input-group-text"><img class="rounded-circle" src="https://cataas.com/cat/says/hello%20world!" width="50" height="50" style="margin-right: 5px;">SpankyButtface</span><input class="form-control" type="text"><button class="btn btn-primary" type="button">Send</button></div>
+                <div class="input-group"><span class="input-group-text" id="username"></span><input class="form-control" type="text" id="userInput"><button class="btn btn-primary" type="button" onclick="sendMessage(event)">Send</button></div>
             </div>
         </div>
     </div>
