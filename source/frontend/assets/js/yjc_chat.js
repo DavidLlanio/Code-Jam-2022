@@ -23,7 +23,7 @@ var usern = sessionStorage.getItem("usern");
 document.getElementById("username").textContent=usern;
 
 // Connect to websocket server
-const ws_chat = new WebSocket("ws://localhost:8000/admin/ws");
+const ws_chat = new WebSocket("ws://localhost:8000/chat/ws");
 
 ws_chat.onmessage = function(event){
     const msg = JSON.parse(event.data);
