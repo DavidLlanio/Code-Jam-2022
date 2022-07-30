@@ -1,0 +1,8 @@
+version: "3"
+services:
+  frontend:
+    build: ./source/frontend/
+    volumes:
+      - ./source/frontend:/usr/share/nginx/html:z
+    ports:
+      - 80:80
