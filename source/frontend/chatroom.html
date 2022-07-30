@@ -20,11 +20,18 @@
             </div>
         </div>
     </div>
+    <div class="text-center" id="popupform" style="display: none;">
+        <form>
+            <h1>Edit</h1>
+            <hr><input class="form-control" type="text" id="editUser" name="username"><input class="form-control" type="text" id="editMessage" name="message"><input class="form-control" type="url" id="editImage" name="imageURL">
+            <div class="btn-group" role="group"><button class="btn btn-primary" id="editSave" type="button" style="background: var(--bs-green);" onclick="editSendButton(event)">Save</button><button class="btn btn-primary" id="editCancel" type="button" style="background: var(--bs-red);" onclick="editCancelButton()">Cancel</button></div>
+        </form>
+    </div>
     <div>
         <ul class="list-group" id="messagelist">
             <li class="list-group-item" id="12345">
-                <div class="container" style="border-style: solid;"><img class="rounded-circle" src="https://cataas.com/cat/says/hello%20world!" width="50" height="50" style="margin: 0px;margin-top: 5px;margin-right: 5px;margin-bottom: 5px;"><span>Teddybear42069</span>
-                    <p>Gonna poop myself</p><span>11:02</span><button class="btn btn-primary float-end" type="button" style="font-size: 10px;padding-bottom: 0px;padding-top: 2px;">Edit</button>
+                <div class="container" style="border-style: solid;"><img class="rounded-circle" id="userImage" src="https://cataas.com/cat/says/hello%20world!" width="50" height="50" style="margin: 0px;margin-top: 5px;margin-right: 5px;margin-bottom: 5px;"><span id="messageUser">Teddybear42069</span>
+                    <p id="messageContent">Gonna poop myself</p><span>11:02</span><button class="btn btn-primary float-end" type="button" style="font-size: 10px;padding-bottom: 0px;padding-top: 2px;" onclick="editUser(event, this)">Edit</button>
                 </div>
             </li>
             <li class="list-group-item" style="border-style: none;">
@@ -43,9 +50,7 @@
         </div>
     </div>
     <script src="assets/bootstrap/js/bootstrap.min.js"></script>
-    <script src="assets/js/yjc_admin.js"></script>
     <script src="assets/js/yjc_chat.js"></script>
-    <script src="assets/js/yjc_index.js"></script>
 </body>
 
 </html>

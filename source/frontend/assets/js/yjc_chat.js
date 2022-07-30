@@ -1,3 +1,9 @@
+// Global variables
+var currentEditUser;
+var currentEditMsg;
+var currentEditMsgID;
+var currentEditImageURL;
+
 // Funciton to format strings
 String.prototype.formatUnicorn = String.prototype.formatUnicorn ||
 function () {
@@ -50,7 +56,7 @@ ws_chat.onmessage = function(event){
 function sendMessage(event){
     const umsg = document.getElementById("userInput").value;
     const msg = {
-        type: "message"
+        type: "message",
         user: usern,
         message: umsg
     };
@@ -65,8 +71,8 @@ function creatNonUserMessage(user, mesg, mesgID, time){
       <li id="{_mesgID}" class="list-group-item"> \
       <div class="container" style="border-style: solid;"> \
       <img class="rounded-circle" src="https://cataas.com/cat/says/hello%20world!" width="50" height="50" style="margin: 0px;margin-top: 5px;margin-right: 5px;margin-bottom: 5px;" /> \
-      <span>{_user}</span> \
-      <p>{_mesg}</p> \
+      <span id="messageUser">{_user}</span> \
+      <p id="messageContent>{_mesg}</p> \
       <span>{_time}</span> \
       <button class="btn btn-primary float-end" type="button" style="font-size: 10px;padding-bottom: 0px;padding-top: 2px;">Edit</button> \
       </div> \
@@ -82,14 +88,89 @@ function creatUserMessage(user, mesg, mesgID, time){
       <li id="{_mesgID}" class="list-group-item"> \
       <div class="container" style="border-style: solid;"> \
       <img class="rounded-circle" src="https://cataas.com/cat/says/hello%20world!" width="50" height="50" style="margin: 0px;margin-top: 5px;margin-right: 5px;margin-bottom: 5px;" /> \
-      <span>{_user}</span> \
-      <p>{_mesg}</p> \
+      <span id="messageUser">{_user}</span> \
+      <p id="messageContent">{_mesg}</p> \
       <span>{_time}</span> \
       </div> \
       </li> \
     '.formatUnicorn({
         _mesgID:mesgID, _user:user, _mesg:mesg, _time:time
     });   
+}
+
+function editUser(event, elem){
+    const regex1 = /(?<="messageUser">)[\w\s]+/g;
+    currentEditUser = String(elem.parentElement.innerHTML.match(regex1));
+    
+    currentEditMsg= elem.previousSibling.previousSibling.textContent;
+    
+    currentEditImageURL = elem.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling.src;
+    
+    currentEditMsgID= elem.parentElement.parentElement.id;
+    
+    editPopup();
+    
+    
+}
+
+function editPopup(){
+    const elem = document.getElementById("popupform");
+    elem.style.display = "block";
+    
+    var formChildren = elem.firstElementChild.children;
+    
+    // Placeholder username
+    formChildren[2].placeholder = currentEditUser;
+    
+    // Placeholder message
+    formChildren[3].placeholder = currentEditMsg;
+    
+    // Placeholder imageURL
+    formChildren[4].placeholder = currentEditImageURL;
+}
+
+function editSendButton(event){
+    const elem = document.getElementById("popupform");
+    
+    var formChildren = elem.firstElementChild.children;
+    
+    // Get user if changed
+    var userVal = formChildren[2].value;
+    if (userVal !== ""){
+        userVal = currentEditUser;
+    }
+    
+    // Get message if changed
+    var msgVal = formChildren[3].value;
+    if (msgVal !== ""){
+        msgVal = currentEditMsg;
+    }
+    
+    // Get ImageURL if changed
+    var imageVal = formChildren[4].value;
+    if (imageVal !== ""){
+        imageVal = currentEditImageURL;
+    }
+    
+    // Send changes to server
+    const comm = {
+        type: "command",
+        auth: "user",
+        features: {},
+        content: {
+            user: {currentEditUser: userVal},
+            msg: {currentEditMsg: msgVal},
+            img: {currentEditImagURL: imageVal},
+            msgID: currentEditMsgID
+        }
+    };
+    
+    // Send packet
+    ws_chat.send(JSON.stringify(comm));
+}
+
+function editCancelButton(){
+    document.getElementById("popupform").style.display = "none";
 }
 
 function leaveButton(event){
