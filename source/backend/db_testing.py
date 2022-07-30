@@ -1,16 +1,16 @@
 import asyncio
 import os
 
-import database
-from database import Admin, Credentials, Messages
+from database import Credentials, Messages
 from motor import motor_asyncio
 
 # Note: To run these tests,
-# TODO: Get this file up to current standard for _database.py
 # docker compose -f "docker-compose.dbtesting.yaml" up --build
+
 
 # Testing for messages table
 async def main():
+    """Main testing method"""
     client = motor_asyncio.AsyncIOMotorClient(
         host=["database:27017"],
         username=os.getenv("USERNAME"),
@@ -57,5 +57,6 @@ async def main():
     print("Nothing should appear after this point!")
     await credentials.show_table()
 
-if(__name__=="__main__"):
+
+if __name__ == "__main__":
     asyncio.run(main())

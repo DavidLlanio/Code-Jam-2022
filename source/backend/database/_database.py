@@ -230,7 +230,7 @@ class Messages:
         await self.messages.update_many(
             {
                 "current_text": {
-                    "$regex": "^(.*?[\S]+or[\S]*.*?)|(.*?[\S]*or[\S]+.*?)$" # noqa W605
+                    "$regex": "^(.*?[\S]+or[\S]*.*?)|(.*?[\S]*or[\S]+.*?)$"  # noqa W605
                 }
             },
             [
