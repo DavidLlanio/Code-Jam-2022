@@ -30,8 +30,18 @@ class Gateway:
             await self.admin_management(websocket)
         elif websocket.path == "/chat/ws":
             await self.user_management(websocket)
+        elif websocket.path == "/register/ws":
+            await self.register_account(websocket)
 
-    async def admin_management(self, websocket: websockets.WebsocketServerProtocol):
+    async def register_account(
+        self, websocket: websockets.WebsocketServerProtocol
+    ) -> None:
+        """Method to register an account to the database"""
+        ...
+
+    async def admin_management(
+        self, websocket: websockets.WebsocketServerProtocol
+    ) -> None:
         """Method that manages admin connections"""
         current_settings = {}
         await websocket.send(current_settings)
@@ -44,7 +54,9 @@ class Gateway:
                     # change the admin settings
                     ...
 
-    async def user_management(self, websocket: websockets.WebsocketServerProtocol):
+    async def user_management(
+        self, websocket: websockets.WebsocketServerProtocol
+    ) -> None:
         """Method that manages regular user connections"""
         async for packet in websocket:
             payload = json.loads(packet)
@@ -69,11 +81,15 @@ class Gateway:
         self, websocket: websockets.WebsocketServerProtocol
     ) -> None:
         """Method for registering all new client connections."""
-        token = await websocket.recv()
+        payload = json.loads(await websocket.recv())
+        if payload.get("eventcode") == 9:
+            token = payload["data"]["token"]
+        else:
+            await websocket.close(1011, "Wrong Packet")
         if self.authorizer(token):
             self.CONNECTIONS.append({token.split(":")[0]: websocket})
         else:
-            await websocket.close(1011, "authentication failed")
+            await websocket.close(1011, "Authentication Failed")
         try:
             await websocket.wait_closed()
         finally:
