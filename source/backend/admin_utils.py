@@ -16,6 +16,7 @@ class Settings(object):
 
     @classmethod
     async def create_table(cls, client):
+        """Sets up the Settings table."""
         self = Settings()
         self.admin = await database.Admin.create_admin(client)
         self.admin_table = await self.admin.pull_table()

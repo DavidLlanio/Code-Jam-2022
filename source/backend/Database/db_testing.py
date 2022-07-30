@@ -1,7 +1,7 @@
 from database import Admin, Credentials, Messages
-import asyncio
 
 # Note: To run these tests,
+# TODO: Get this file up to current standard for _database.py
 # docker compose -f "docker-compose.dbtesting.yaml" up --build
 
 # Testing for messages table

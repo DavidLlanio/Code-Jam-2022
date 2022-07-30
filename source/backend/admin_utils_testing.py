@@ -10,6 +10,7 @@ from motor import motor_asyncio
 
 
 async def main():
+    """Testing script"""
     client = motor_asyncio.AsyncIOMotorClient(
         host=["database:27017"],
         username=os.getenv("USERNAME"),
@@ -33,5 +34,6 @@ async def main():
     await messages.show_table()
     await messages.drop_all()
 
-if(__name__ == '__main__'):
+
+if __name__ == "__main__":
     asyncio.run(main())

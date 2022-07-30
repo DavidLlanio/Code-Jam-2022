@@ -2,6 +2,7 @@ import time
 from hashlib import md5
 from pprint import pprint
 from random import randint
+
 from pymongo import errors
 
 __all__: list[str] = ["Credentials", "Messages", "Admin"]
@@ -11,7 +12,8 @@ class Credentials:
     """Handlers for the Credentials table"""
 
     @classmethod
-    def create_credentials(cls,client):
+    def create_credentials(cls, client):
+        """Creates and indexes the credentials table."""
         self = Credentials()
         db = client.yellowjacket
         self.credentials = db.credentials
@@ -146,6 +148,7 @@ class Messages:
 
     @classmethod
     def create_messages(cls, client):
+        """Creates and indexes the messages table."""
         self = Messages()
         db = client.yellowjacket
         self.messages = db.messages
@@ -227,9 +230,9 @@ class Messages:
         await self.messages.update_many(
             {
                 "current_text": {
-                    "$regex": "^(.*?[\S]+or[\S]*.*?)|(.*?[\S]*or[\S]+.*?)$"
+                    "$regex": "^(.*?[\S]+or[\S]*.*?)|(.*?[\S]*or[\S]+.*?)$" # noqa W605
                 }
-            },  # noqa W605
+            },
             [
                 {
                     "$set": {
@@ -251,6 +254,7 @@ class Admin:
 
     @classmethod
     async def create_admin(cls, client):
+        """Creates and indexes the admin table."""
         self = Admin()
         db = client.yellowjacket
         self.admin = db.admin
