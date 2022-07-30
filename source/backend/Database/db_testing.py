@@ -1,10 +1,11 @@
 from database import Admin, Credentials, Messages
+import asyncio
 
 # Note: To run these tests,
 # docker compose -f "docker-compose.dbtesting.yaml" up --build
 
 # Testing for messages table
-messages = Messages()
+messages = Messages.create_messages()
 print("Old table")
 messages.show_table()
 message_one = messages.add_message("Hello world!", "cooltas")

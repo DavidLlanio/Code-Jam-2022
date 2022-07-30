@@ -14,15 +14,12 @@ class Settings(object):
             cls.instance = super(Settings, cls).__new__(cls)
         return cls.instance
 
-    def __init__(self) -> None:
-        """Gets the table as a dict from the db.
-
-        Additional: Can pass a "channel" argument to it
-        in the future so that you can choose which channel's
-        settings you want to pull.
-        """
-        self.admin = database.Admin()
-        self.admin_table = self.admin.pull_table()
+    @classmethod
+    async def create_table(cls, client):
+        self = Settings()
+        self.admin = await database.Admin.create_admin(client)
+        self.admin_table = await self.admin.pull_table()
+        return self
 
     def return_channel_document(self) -> dict[str, bool]:
         """Returns the current admin_table."""
@@ -42,6 +39,6 @@ class Settings(object):
 
         return frontend_mapped_settings
 
-    def update_settings(self, settings_to_update: dict[str, bool]) -> None:
+    async def update_settings(self, settings_to_update: dict[str, bool]) -> None:
         """Edits the required properties"""
-        self.admin_table = self.admin.change_properties(settings_to_update)
+        self.admin_table = await self.admin.change_properties(settings_to_update)
