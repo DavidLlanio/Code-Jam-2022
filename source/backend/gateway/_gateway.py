@@ -4,6 +4,8 @@ from typing import ClassVar
 
 import websockets
 
+from ..database import Admin, Credentials, Messages
+
 __all__: list[str] = ["Gateway"]
 
 
@@ -17,6 +19,10 @@ class Gateway:
         cls, host: str | None = None, port: int | None = None
     ) -> None:
         """Method to initiate/deploy the gateway."""
+        cls.messages = Messages.create_messages()
+        cls.credentials = Credentials()
+        cls.admin = Admin()
+
         async with websockets.serve(
             cls.register_connections, host, port, ping_interval=45, ping_timeout=20
         ) as websocket:
@@ -37,7 +43,12 @@ class Gateway:
         self, websocket: websockets.WebsocketServerProtocol
     ) -> None:
         """Method to register an account to the database"""
-        ...
+        payload = await websocket.recv()
+        await self.credentials.save_credentials(
+            payload["username"], payload["password"], payload["image_url"]
+        )
+        await websocket.send("Welcome!")
+        await websocket.close(1000, "Done!")
 
     async def admin_management(
         self, websocket: websockets.WebsocketServerProtocol
@@ -47,12 +58,18 @@ class Gateway:
         await websocket.send(current_settings)
         async for packet in websocket:
             payload = json.loads(packet)
-            match payload.get("eventcode"):
-                case 0:
-                    await websocket.ping("{eventcode: 0, data: {}}")
-                case 8:
-                    # change the admin settings
-                    ...
+            payload_eventcode = payload.get("eventcode")
+            if payload_eventcode == 0:
+                await websocket.ping("{eventcode: 0, data: {}}")
+            elif payload_eventcode == 8:
+                self.admin.add_permissions(
+                    channel=payload["channel"],
+                    randomize_username=payload["randomize_username"],
+                    allow_edit_avatars=payload["allow_edit_avatars"],
+                    allow_edit_messages=payload["allow_edit_messages"],
+                    sort_by_alpha=payload["sort_by_alpha"],
+                    double_english=payload["double_english"],
+                )
 
     async def user_management(
         self, websocket: websockets.WebsocketServerProtocol
@@ -64,7 +81,6 @@ class Gateway:
             if payload_eventcode == 0:
                 await websocket.ping("{eventcode: 0, data: {}}")
             elif payload_eventcode == 5:
-                # save the payload to the db
                 message_payload = {
                     "type": "message",
                     "user": payload.get("user", "Unknown User"),
@@ -72,10 +88,10 @@ class Gateway:
                 }
                 await self.send_message(message_payload)
 
-    def authorizer(self, token: str) -> bool:
+    async def authorizer(self, token: str) -> bool:
         """Method to authorize certain users."""
         username, password = token.split(":")
-        # return True if the credentials are in the db, return False if not token must look like: username:password
+        return await self.credentials.login(username, password)
 
     async def register_connections(
         self, websocket: websockets.WebsocketServerProtocol
@@ -86,7 +102,7 @@ class Gateway:
             token = payload["data"]["token"]
         else:
             await websocket.close(1011, "Wrong Packet")
-        if self.authorizer(token):
+        if await self.authorizer(token):
             self.CONNECTIONS.append({token.split(":")[0]: websocket})
         else:
             await websocket.close(1011, "Authentication Failed")
@@ -97,6 +113,7 @@ class Gateway:
 
     async def send_message(self, payload: dict[str, str]) -> None:
         """Method to send a message to all clients"""
+        self.messages.add_message(payload["message"], payload["user"])
         (asyncio.get_event_loop() or asyncio.new_event_loop()).run_in_executor(
             None, websockets.broadcast(self.CONNECTIONS, payload["message"])
         )
