@@ -6,7 +6,7 @@ ws_admin.onmessage = function(event){
     const msg = JSON.parse(event.data);
     
     if (msg.eventcode == 0){
-        ws_admin.send("1");
+        ws_admin.send('{"eventcode":1}');
     }
 }
 
@@ -20,7 +20,7 @@ function sendSettings(event){
     
     // Create packet
     const msg = {
-        type: "command",
+        eventcode: 8,
         auth: "admin",
         features: {
             ai: tog1s,
