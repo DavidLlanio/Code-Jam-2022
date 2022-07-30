@@ -183,10 +183,27 @@ function editSendButton(event){
     // Send packet
     ws_chat.send(JSON.stringify(commUser));
     ws_chat.send(JSON.stringify(commMesg));
+    
+    updateMessage(currentEditMsgID, msgVal);
+    
+    elem.style.display = "none";
 }
 
-function updateUser(oldU, newU, oldIm, newIm){
+function updateUser(msgID, oldU, newU, oldIm, newIm){
     
+}
+
+function updateMessage(msgID, newMsg){
+    const msglist = document.getElementById("messagelist");
+    
+    var messages = msglist.children;
+    
+    for (var i = 0; i < messages.length; i++){
+        if (messages[i].id == msgID){
+            var content = messages[i].firstElementChild.children;
+            content[2].innerHTML = newMsg;
+        }
+    }
 }
 
 function editCancelButton(){
