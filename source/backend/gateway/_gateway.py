@@ -60,17 +60,17 @@ class Gateway:
         """Method that manages regular user connections"""
         async for packet in websocket:
             payload = json.loads(packet)
-            match payload.get("eventcode"):
-                case 0:
-                    await websocket.ping("{eventcode: 0, data: {}}")
-                case 5:
-                    # save the payload to the db
-                    message_payload = {
-                        "type": "message",
-                        "user": payload.get("user", "Unknown User"),
-                        "message": payload.get("message", "Hello World!"),
-                    }
-                    await self.send_message(message_payload)
+            payload_eventcode = payload.get("eventcode")
+            if payload_eventcode == 0:
+                await websocket.ping("{eventcode: 0, data: {}}")
+            elif payload_eventcode == 5:
+                # save the payload to the db
+                message_payload = {
+                    "type": "message",
+                    "user": payload.get("user", "Unknown User"),
+                    "message": payload.get("message", "Hello World!"),
+                }
+                await self.send_message(message_payload)
 
     def authorizer(self, token: str) -> bool:
         """Method to authorize certain users."""
