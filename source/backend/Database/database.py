@@ -166,6 +166,7 @@ class Messages:
         self.messages.create_index("editor_username")
         self.messages.create_index("current_text")
         self.messages.create_index("pre_edit_text")
+        self.messages.create_index("pre_mutation_text")
 
     # Helpers start here
     def locate_message(self, id: str) -> dict:
@@ -229,6 +230,25 @@ class Messages:
             },
         )
 
+    def double_english(self):
+        """Makes your english *sophisticated*"""
+        self.messages.update_many(
+            {"current_text": {"$regex": "^(.*?[\S]+or[\S]*.*?)|(.*?[\S]*or[\S]+.*?)$"}}, # noqa W605
+            [
+                {
+                    "$set": {
+                        "current_text": {
+                            "$replaceAll": {
+                                "input": "$current_text",
+                                "find": "or",
+                                "replacement": "ouur",
+                            }
+                        }
+                    }
+                }
+            ],
+        )
+
 
 class Admin:
     """Handlers for the admin table."""
@@ -254,7 +274,10 @@ class Admin:
             "sort_by_alpha": False,
             "double_english": False,
         }
-        self.admin.insert_one(defaults)
+        try:
+            self.admin.insert_one(defaults)
+        except errors.DuplicateKeyError:
+            print("Default already exists.")
 
     def show_table(self) -> None:
         """Shows the table. Useful for debugging"""
