@@ -2,6 +2,7 @@ import asyncio
 import json
 from typing import ClassVar
 
+import database
 import websockets
 
 __all__: list[str] = ["Gateway"]
@@ -48,16 +49,22 @@ class Gateway:
         """Method that manages regular user connections"""
         async for packet in websocket:
             payload = json.loads(packet)
+            messages = database.Messages()
             match payload.get("eventcode"):
                 case 0:
                     await websocket.ping("{eventcode: 0, data: {}}")
                 case 5:
                     # save the payload to the db
+                    message_id = messages.add_message(
+                        current_text="Hello world", sender_username="Unknown User"
+                    )
                     message_payload = {
                         "type": "message",
                         "user": payload.get("user", "Unknown User"),
                         "message": payload.get("message", "Hello World!"),
+                        "uid": message_id,
                     }
+
                     await self.send_message(message_payload)
 
     def authorizer(self, token: str) -> bool:
