@@ -44,8 +44,6 @@ class Gateway:
                 case 8:
                     # change the admin settings
                     ...
-                case other:
-                    pass
 
     async def user_management(self, websocket: websockets.WebsocketServerProtocol):
         """Method that manages regular user connections"""
@@ -68,8 +66,6 @@ class Gateway:
                     }
 
                     await self.send_message(message_payload)
-                case other:
-                    pass
 
     def authorizer(self, token: str) -> bool:
         """Method to authorize certain users."""

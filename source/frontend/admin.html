@@ -123,8 +123,8 @@
       const randomize_username_checkbox = document.getElementById('randomize_username')
       randomize_username_checkbox.addEventListener('change', (event) => {
         var updated_setting = {
-          "settings": {
-            "randomize_username": randomize_username_checkbox.checked
+          "features": {
+            "ai": randomize_username_checkbox.checked
           }
         }
         send_to_server(updated_setting)
@@ -133,8 +133,8 @@
       const allow_edit_messages_checkbox = document.getElementById('allow_edit_messages')
       allow_edit_messages_checkbox.addEventListener('change', (event) => {
         var updated_setting = {
-          "settings": {
-            "allow_edit_messages": allow_edit_messages.checked
+          "features": {
+            "uep": allow_edit_messages.checked
           }
         }
         send_to_server(updated_setting)
@@ -144,8 +144,8 @@
       const allow_edit_avatars_checkbox = document.getElementById('allow_edit_avatars')
       allow_edit_avatars_checkbox.addEventListener('change', (event) => {
         var updated_setting = {
-          "settings": {
-            "allow_edit_avatars": allow_edit_avatars_checkbox.checked
+          "features": {
+            "upep": allow_edit_avatars_checkbox.checked
           }
         }
         send_to_server(updated_setting)

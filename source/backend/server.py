@@ -42,7 +42,7 @@ async def admin_websocket(websocket: WebSocket):
                     await websocket.send_json(
                         {
                             "message": "correct password",
-                            "settings": settings.get_settings(),
+                            "features": settings.return_frontend_settings(),
                         }
                     )
                     admin_client_list.append(websocket)
@@ -54,8 +54,22 @@ async def admin_websocket(websocket: WebSocket):
 
             # monitors websocket for changes to the settings
             data = await websocket.receive_json()
-            if updated_settings := data.get("settings", None):
-                settings.update_settings(updated_settings)
+
+            # maps the settings from the received frontend shorthand names to the longform backend names
+            received_settings = data.get("features", None)
+            settings_remap = {
+                "ai": "randomize_username",
+                "allow_edit_messages": "uep",
+                "allow_edit_avatars": "upep",
+                "sort_by_alpha": "as",
+                "double_english": "de",
+            }
+            mapped_settings = {
+                settings_remap[k]: received_settings[k] for k in received_settings
+            }
+
+            if mapped_settings:
+                settings.update_settings(mapped_settings)
 
             # TODO: notify chat clients when settings have changed
             # figure out changed setting
@@ -63,11 +77,13 @@ async def admin_websocket(websocket: WebSocket):
             #   make db changes to chat messages/users if needed
             #   notify chat clients, if needed
 
-            # sends an update list to all admin clients
+            # sends an updated list of settings to all admin clients
             # TODO: update to only send settings that have been updated
             for admin_client in admin_client_list:
                 if admin_client != websocket:
-                    await websocket.send_json({"settings": settings.get_settings()})
+                    await websocket.send_json(
+                        {"features": settings.return_frontend_settings()}
+                    )
 
     except WebSocketDisconnect:
         if websocket in admin_client_list:
