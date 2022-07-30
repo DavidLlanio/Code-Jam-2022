@@ -2,7 +2,6 @@ import asyncio
 import json
 from typing import ClassVar
 
-import database
 import websockets
 
 __all__: list[str] = ["Gateway"]
@@ -31,8 +30,18 @@ class Gateway:
             await self.admin_management(websocket)
         elif websocket.path == "/chat/ws":
             await self.user_management(websocket)
+        elif websocket.path == "/register/ws":
+            await self.register_account(websocket)
 
-    async def admin_management(self, websocket: websockets.WebsocketServerProtocol):
+    async def register_account(
+        self, websocket: websockets.WebsocketServerProtocol
+    ) -> None:
+        """Method to register an account to the database"""
+        ...
+
+    async def admin_management(
+        self, websocket: websockets.WebsocketServerProtocol
+    ) -> None:
         """Method that manages admin connections"""
         current_settings = {}
         await websocket.send(current_settings)
@@ -45,27 +54,23 @@ class Gateway:
                     # change the admin settings
                     ...
 
-    async def user_management(self, websocket: websockets.WebsocketServerProtocol):
+    async def user_management(
+        self, websocket: websockets.WebsocketServerProtocol
+    ) -> None:
         """Method that manages regular user connections"""
         async for packet in websocket:
             payload = json.loads(packet)
-            messages = database.Messages()
-            match payload.get("eventcode"):
-                case 0:
-                    await websocket.ping("{eventcode: 0, data: {}}")
-                case 5:
-                    # save the payload to the db
-                    message_id = messages.add_message(
-                        current_text="Hello world", sender_username="Unknown User"
-                    )
-                    message_payload = {
-                        "type": "message",
-                        "user": payload.get("user", "Unknown User"),
-                        "message": payload.get("message", "Hello World!"),
-                        "uid": message_id,
-                    }
-
-                    await self.send_message(message_payload)
+            payload_eventcode = payload.get("eventcode")
+            if payload_eventcode == 0:
+                await websocket.ping("{eventcode: 0, data: {}}")
+            elif payload_eventcode == 5:
+                # save the payload to the db
+                message_payload = {
+                    "type": "message",
+                    "user": payload.get("user", "Unknown User"),
+                    "message": payload.get("message", "Hello World!"),
+                }
+                await self.send_message(message_payload)
 
     def authorizer(self, token: str) -> bool:
         """Method to authorize certain users."""
@@ -76,11 +81,15 @@ class Gateway:
         self, websocket: websockets.WebsocketServerProtocol
     ) -> None:
         """Method for registering all new client connections."""
-        token = await websocket.recv()
+        payload = json.loads(await websocket.recv())
+        if payload.get("eventcode") == 9:
+            token = payload["data"]["token"]
+        else:
+            await websocket.close(1011, "Wrong Packet")
         if self.authorizer(token):
             self.CONNECTIONS.append({token.split(":")[0]: websocket})
         else:
-            await websocket.close(1011, "authentication failed")
+            await websocket.close(1011, "Authentication Failed")
         try:
             await websocket.wait_closed()
         finally:

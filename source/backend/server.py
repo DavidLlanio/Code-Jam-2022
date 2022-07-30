@@ -5,6 +5,9 @@ from .admin_utils import Settings
 settings = Settings()
 app = FastAPI()
 
+"""NOTE: moved the functionality to the gateway"""
+
+
 # chat_client_list = []
 
 
