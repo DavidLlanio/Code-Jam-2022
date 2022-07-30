@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   dbhandler:
-    build: ./source/backend/database/
+    build: ./source/backend/
     environment:
       - USERNAME=codejam2022
       - PASSWORD=yellowjacket
