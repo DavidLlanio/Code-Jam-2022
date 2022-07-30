@@ -37,10 +37,13 @@ ws_chat.onmessage = function(event){
     switch(msg.eventcode){
         // Handle Heartbeat
         case 0:
-           ws_admin.send("1");
+           ws_chat.send('{"eventcode":1}');
            break;
+        // Handle username/img change
+        case 3:
+            break;
         // Handle message
-        case 1:
+        case 5:
            if (msg.user === usern){
                creatUserMessage(msg.user, msg.message, 
                                 msg.messageID, msg.time);
@@ -49,6 +52,10 @@ ws_chat.onmessage = function(event){
                creatNonUserMessage(msg.user, msg.message, 
                                 msg.messageID, msg.time);
            }
+           break;
+        // Handle message change
+        case 6:
+            break;
             
     }
 }
@@ -56,7 +63,7 @@ ws_chat.onmessage = function(event){
 function sendMessage(event){
     const umsg = document.getElementById("userInput").value;
     const msg = {
-        type: "message",
+        eventcode: 5,
         user: usern,
         message: umsg
     };
@@ -136,37 +143,50 @@ function editSendButton(event){
     
     // Get user if changed
     var userVal = formChildren[2].value;
-    if (userVal !== ""){
+    if (userVal === ""){
         userVal = currentEditUser;
     }
     
     // Get message if changed
     var msgVal = formChildren[3].value;
-    if (msgVal !== ""){
+    if (msgVal === ""){
         msgVal = currentEditMsg;
     }
     
     // Get ImageURL if changed
     var imageVal = formChildren[4].value;
-    if (imageVal !== ""){
+    if (imageVal === ""){
         imageVal = currentEditImageURL;
     }
     
     // Send changes to server
-    const comm = {
-        type: "command",
+    const commUser = {
+        eventcode: 3,
         auth: "user",
         features: {},
         content: {
             user: {currentEditUser: userVal},
-            msg: {currentEditMsg: msgVal},
             img: {currentEditImagURL: imageVal},
+        }
+    };
+    
+    const commMesg = {
+        eventcode: 6,
+        auth: "user",
+        features: {},
+        content: {
+            msg: {currentEditMsg: msgVal},
             msgID: currentEditMsgID
         }
     };
     
     // Send packet
-    ws_chat.send(JSON.stringify(comm));
+    ws_chat.send(JSON.stringify(commUser));
+    ws_chat.send(JSON.stringify(commMesg));
+}
+
+function updateUser(oldU, newU, oldIm, newIm){
+    
 }
 
 function editCancelButton(){
