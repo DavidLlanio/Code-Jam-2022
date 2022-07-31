@@ -213,5 +213,5 @@ function editCancelButton(){
 
 function leaveButton(event){
     ws_chat.close();
-    window.location.href = "localhost:8000/";
+    window.location.href = "/";
 }
