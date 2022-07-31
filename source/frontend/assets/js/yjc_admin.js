@@ -1,5 +1,5 @@
 // Connect to websocket server
-const ws_admin = new WebSocket("ws://localhost:8000/admin/ws");
+const ws_admin = new WebSocket("ws://localhost:8000/adminpanel.html/ws");
 
 // handle heartbeat
 ws_admin.onmessage = function(event){
@@ -39,5 +39,5 @@ function sendSettings(event){
 
 function backOut(event){
     ws_admin.close();
-    window.location.href = "localhost:8000/";
+    window.location.href = "http://localhost:8001/";
 }

@@ -3,9 +3,9 @@ function chatPress(){
     const pass = document.getElementById("imageurl");
     
     if (pass === "www.admin123.com"){
-        window.location.href = "localhost:8000/admin";
+        window.location.href = "http://localhost:8001/adminpanel.html";
     } else {
         sessionStorage.setItem("usern", username);
-        window.location.href = "localhost:8000/chat";
+        window.location.href = "http://localhost:8001/chatroom.html";
     }
 }

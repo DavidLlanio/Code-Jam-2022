@@ -29,7 +29,7 @@ var usern = sessionStorage.getItem("usern");
 document.getElementById("username").textContent=usern;
 
 // Connect to websocket server
-const ws_chat = new WebSocket("ws://localhost:8000/chat/ws");
+const ws_chat = new WebSocket("ws://localhost:8000/chatroom.html/ws");
 
 ws_chat.onmessage = function(event){
     const msg = JSON.parse(event.data);
@@ -189,8 +189,24 @@ function editSendButton(event){
     elem.style.display = "none";
 }
 
-function updateUser(msgID, oldU, newU, oldIm, newIm){
+function updateUser(oldU, newU, oldIm, newIm){
+    // If nothing changed, return
+    if (oldU == newU && oldIm == newIm){
+        return;
+    }
     
+    const msglist = document.getElementById("messagelist");
+    
+    var messages = msglist.children;
+    
+    for (var i = 0; i < messages.length; i++){
+        var content = messages[i].firstElementChild.children;
+        var username = content[1].textContent;
+        if (username == oldU){
+            content[1].textContent = newU;
+            content[0].src = newIm;
+        }
+    }
 }
 
 function updateMessage(msgID, newMsg){
@@ -212,5 +228,5 @@ function editCancelButton(){
 
 function leaveButton(event){
     ws_chat.close();
-    window.location.href = "localhost:8000/";
+    window.location.href = "/";
 }
