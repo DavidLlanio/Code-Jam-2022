@@ -1,5 +1,5 @@
 // Connect to websocket server
-const ws_admin = new WebSocket("ws://localhost:8000/admin/ws");
+const ws_admin = new WebSocket("ws://localhost:8000/adminpanel.html/ws");
 
 // handle heartbeat
 ws_admin.onmessage = function(event){

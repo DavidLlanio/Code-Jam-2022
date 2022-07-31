@@ -29,7 +29,7 @@ var usern = sessionStorage.getItem("usern");
 document.getElementById("username").textContent=usern;
 
 // Connect to websocket server
-const ws_chat = new WebSocket("ws://localhost:8000/chat/ws");
+const ws_chat = new WebSocket("ws://0.0.0.0:8000/chatroom.html/ws");
 
 ws_chat.onmessage = function(event){
     const msg = JSON.parse(event.data);
@@ -37,7 +37,8 @@ ws_chat.onmessage = function(event){
     switch(msg.eventcode){
         // Handle Heartbeat
         case 0:
-           ws_chat.send('{"eventcode":1}');
+           console.log("pong")
+           ws_chat.send('1');
            break;
         // Handle username/img change
         case 3:
